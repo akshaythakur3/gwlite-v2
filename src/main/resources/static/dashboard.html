@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Workspace Lite</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header class="topbar">
+        <h2>Workspace Lite</h2>
+        <div>
+            <span id="user-name"></span>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <main class="dashboard">
+        <div class="dashboard-actions">
+            <button onclick="createDocument()">+ New Document</button>
+            <button onclick="createFolder()">+ New Folder</button>
+        </div>
+
+        <section>
+            <h3>My Documents</h3>
+            <ul id="my-documents" class="doc-list"></ul>
+        </section>
+
+        <section>
+            <h3>Shared With Me</h3>
+            <ul id="shared-documents" class="doc-list"></ul>
+        </section>
+    </main>
+
+    <script src="/js/app.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

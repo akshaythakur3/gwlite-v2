@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Editor - Workspace Lite</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header class="topbar">
+        <a href="/dashboard.html" class="back-link">&larr; Back</a>
+        <input type="text" id="doc-title" placeholder="Untitled Document">
+        <div>
+            <span id="save-status">Saved</span>
+            <button onclick="openShareModal()">Share</button>
+        </div>
+    </header>
+
+    <main class="editor-container">
+        <textarea id="doc-content" placeholder="Start typing... changes sync live to collaborators"></textarea>
+    </main>
+
+    <div id="share-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Share this document</h3>
+            <input type="email" id="share-email" placeholder="Collaborator's email">
+            <select id="share-role">
+                <option value="VIEWER">Can view</option>
+                <option value="EDITOR">Can edit</option>
+            </select>
+            <button onclick="shareDocument()">Share</button>
+            <button onclick="closeShareModal()">Close</button>
+            <ul id="collaborator-list"></ul>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script src="/js/editor.js"></script>
+</body>
+</html>

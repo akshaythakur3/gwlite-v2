@@ -1,0 +1,38 @@
+version: '3.8'
+
+# Local infrastructure to run the enhanced project against real Redis + MySQL
+# instead of H2. Run: docker compose up -d
+# Then switch application.properties to the MySQL block and set
+# spring.datasource.url=jdbc:mysql://localhost:3306/gwlite
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: gwlite
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # Optional: LocalStack to simulate S3 locally without a real AWS account
+  localstack:
+    image: localstack/localstack:3
+    environment:
+      SERVICES: s3
+    ports:
+      - "4566:4566"
