@@ -44,6 +44,8 @@ body { margin: 0; background: #f6f8fc; color: #202124; }
 .dashboard-actions button {
     padding: 10px 16px; border: none; background: #1a73e8; color: white; border-radius: 6px; cursor: pointer;
 }
+.dashboard-message { color: #137333; min-height: 0; margin: 0; }
+.dashboard-message:empty { display: none; }
 .doc-list { list-style: none; padding: 0; }
 .doc-list li {
     padding: 12px 16px; background: white; margin-bottom: 8px; border-radius: 8px;
@@ -65,11 +67,23 @@ body { margin: 0; background: #f6f8fc; color: #202124; }
 .modal-content {
     background: white; padding: 24px; border-radius: 10px; width: 320px;
 }
+.modal-content h3 { margin-top: 0; }
+.modal-content label { display: block; margin-top: 12px; font-size: 14px; }
 .modal-content input, .modal-content select {
     width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #dadce0; border-radius: 6px;
 }
+.modal-actions { display: flex; gap: 8px; }
 .modal-content button {
     padding: 8px 14px; margin-right: 8px; border: none; background: #1a73e8; color: white;
     border-radius: 6px; cursor: pointer; margin-top: 8px;
 }
+.modal-content .secondary-button { background: #5f6368; }
+.form-error { color: #b3261e; font-size: 13px; min-height: 0; margin: 4px 0; }
+.form-error:empty { display: none; }
 #collaborator-list { list-style: none; padding: 0; margin-top: 12px; font-size: 13px; }
+
+@media (max-width: 600px) {
+    .topbar { padding: 12px 16px; }
+    .dashboard-actions { flex-wrap: wrap; }
+    .modal-content { width: min(320px, calc(100vw - 32px)); }
+}

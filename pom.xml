@@ -102,9 +102,8 @@
 
         <!-- #6: Micrometer registry for GCP Cloud Monitoring (Stackdriver) -->
         <dependency>
-            <groupId>com.google.cloud</groupId>
-            <artifactId>micrometer-stackdriver</artifactId>
-            <version>1.5.4</version>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-stackdriver</artifactId>
         </dependency>
 
         <dependency>

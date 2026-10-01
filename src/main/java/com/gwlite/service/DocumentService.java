@@ -9,6 +9,7 @@ import com.gwlite.repository.SharePermissionRepository;
 import com.gwlite.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -61,11 +62,13 @@ public class DocumentService {
         return saved;
     }
 
+    @Transactional
     public void deleteDocument(Long documentId, User requester) {
         Document doc = findDocumentOrThrow(documentId);
         if (!doc.getOwner().getId().equals(requester.getId())) {
             throw new SecurityException("Only the owner can delete this document");
         }
+        sharePermissionRepository.deleteAll(sharePermissionRepository.findByDocumentId(documentId));
         documentRepository.delete(doc);
     }
 

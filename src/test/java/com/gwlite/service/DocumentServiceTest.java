@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -28,6 +29,7 @@ class DocumentServiceTest {
     @Mock private FolderRepository folderRepository;
     @Mock private SharePermissionRepository sharePermissionRepository;
     @Mock private UserRepository userRepository;
+    @Mock private DocumentCacheService documentCacheService;
 
     @InjectMocks
     private DocumentService documentService;
@@ -66,6 +68,7 @@ class DocumentServiceTest {
     @Test
     void getDocument_ownerCanAccess() {
         when(documentRepository.findById(100L)).thenReturn(Optional.of(document));
+        when(documentCacheService.getContent(100L)).thenReturn("Hello world");
 
         Document result = documentService.getDocument(100L, owner);
 
@@ -89,6 +92,7 @@ class DocumentServiceTest {
         when(documentRepository.findById(100L)).thenReturn(Optional.of(document));
         when(sharePermissionRepository.findByDocumentIdAndUserId(100L, stranger.getId()))
                 .thenReturn(Optional.of(permission));
+        when(documentCacheService.getContent(100L)).thenReturn("Hello world");
 
         Document result = documentService.getDocument(100L, stranger);
 
@@ -147,5 +151,17 @@ class DocumentServiceTest {
         documentService.deleteDocument(100L, owner);
 
         verify(documentRepository, times(1)).delete(document);
+    }
+
+    @Test
+    void deleteDocument_ownerRemovesSharePermissions() {
+        SharePermission permission = new SharePermission();
+        when(documentRepository.findById(100L)).thenReturn(Optional.of(document));
+        when(sharePermissionRepository.findByDocumentId(100L)).thenReturn(List.of(permission));
+
+        documentService.deleteDocument(100L, owner);
+
+        verify(sharePermissionRepository).deleteAll(List.of(permission));
+        verify(documentRepository).delete(document);
     }
 }

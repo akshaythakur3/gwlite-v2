@@ -2,9 +2,49 @@ document.addEventListener('DOMContentLoaded', async () => {
     const user = getUser();
     if (user) document.getElementById('user-name').textContent = user.fullName || user.email;
 
-    await loadMyDocuments();
-    await loadSharedDocuments();
+    document.getElementById('create-document-form').addEventListener('submit', createDocument);
+    document.getElementById('create-folder-form').addEventListener('submit', createFolder);
+
+    await Promise.all([loadFolders(), loadMyDocuments(), loadSharedDocuments()]);
 });
+
+function openDocumentModal() {
+    openCreateModal('document-modal', 'new-document-title');
+}
+
+function openFolderModal() {
+    openCreateModal('folder-modal', 'new-folder-name');
+}
+
+function openCreateModal(modalId, inputId) {
+    document.getElementById(modalId).classList.remove('hidden');
+    const input = document.getElementById(inputId);
+    input.focus();
+    input.select();
+}
+
+function closeCreateModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+    const form = document.querySelector(`#${modalId} form`);
+    const error = document.querySelector(`#${modalId} .form-error`);
+    form.reset();
+    error.textContent = '';
+}
+
+async function loadFolders() {
+    const folders = await apiFetch('/folders/root');
+    const list = document.getElementById('my-folders');
+    list.innerHTML = '';
+    if (folders.length === 0) {
+        list.innerHTML = '<li>No folders yet. Create one above.</li>';
+        return;
+    }
+    folders.forEach(folder => {
+        const li = document.createElement('li');
+        li.textContent = folder.name;
+        list.appendChild(li);
+    });
+}
 
 async function loadMyDocuments() {
     const docs = await apiFetch('/documents/mine');
@@ -38,24 +78,38 @@ async function loadSharedDocuments() {
     });
 }
 
-async function createDocument() {
-    const title = prompt('Document title:', 'Untitled Document');
-    if (!title) return;
-    const doc = await apiFetch('/documents', {
-        method: 'POST',
-        body: JSON.stringify({ title, content: '' })
-    });
-    window.location.href = `/editor.html?id=${doc.id}`;
+async function createDocument(event) {
+    event.preventDefault();
+    const title = document.getElementById('new-document-title').value.trim();
+    const error = document.getElementById('document-error');
+    error.textContent = '';
+    try {
+        const doc = await apiFetch('/documents', {
+            method: 'POST',
+            body: JSON.stringify({ title, content: '' })
+        });
+        window.location.href = `/editor.html?id=${doc.id}`;
+    } catch (err) {
+        error.textContent = err.message;
+    }
 }
 
-async function createFolder() {
-    const name = prompt('Folder name:');
-    if (!name) return;
-    await apiFetch('/folders', {
-        method: 'POST',
-        body: JSON.stringify({ name })
-    });
-    alert('Folder created.');
+async function createFolder(event) {
+    event.preventDefault();
+    const name = document.getElementById('new-folder-name').value.trim();
+    const error = document.getElementById('folder-error');
+    error.textContent = '';
+    try {
+        await apiFetch('/folders', {
+            method: 'POST',
+            body: JSON.stringify({ name })
+        });
+        closeCreateModal('folder-modal');
+        await loadFolders();
+        document.getElementById('dashboard-message').textContent = 'Folder created.';
+    } catch (err) {
+        error.textContent = err.message;
+    }
 }
 
 function escapeHtml(str) {
